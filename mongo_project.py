@@ -32,11 +32,56 @@ def show_menu():
     return option
 
 
+def get_record():
+    print("")
+    first = input("Enter first name > ")
+    last = input("Enter last name > ")
+
+    try:
+        doc = coll.find_one({"first": first.lower(), "last": last.lower()})
+    except:
+        print("Error accessing the database")
+
+    if not doc:         # If no docs are returned an empty cursor object will be returned ie if not doc
+        print("")
+        print("Error! No results found.")
+
+    return doc          # return our doc cursor object either empty or with a result
+
+
+def add_record():
+    print("")
+    first = input("Enter first name > ")
+    last = input("Enter last name > ")
+    dob = input("Enter date of birth > ")
+    gender = input("Enter gender > ")
+    hair_color = input("Enter hair color > ")
+    occupation = input("Enter occupation > ")
+    nationality = input("Enter nationality > ")
+
+    new_doc = {
+        "first": first.lower(),     # storing first & last as lower case to make it easier for finding items later
+        "last": last.lower(),
+        "dob": dob,
+        "gender": gender,
+        "hair_color": hair_color,
+        "occupation": occupation,
+        "nationality": nationality
+    }
+
+    try:
+        coll.insert(new_doc)
+        print("")
+        print("Document inserted")
+    except:
+        print("Error accessing the database")   # ideally should catch the specific error but this will do for now.
+
+
 def main_loop():
     while True:
-        option = show_menu()
+        option = show_menu()        # Call show_menu function and assign it to a variable called option
         if option == "1":
-            print("You have selected option 1")
+            add_record()
         elif option == "2":
             print("You have selected option 2")
         elif option == "3":
@@ -53,4 +98,4 @@ def main_loop():
 
 conn = mongo_connect(MONGO_URI)     # Call our mongo_connection function
 coll = conn[DATABASE][COLLECTION]   # Call our collection
-main_loop()
+main_loop()                         # Call our main_loop function
